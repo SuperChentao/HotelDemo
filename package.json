@@ -1,5 +1,6 @@
 {
   "name": "vite-react-bootstrap-eslint-prettier-vitest",
+  "homepage": "https://SuperChentao.github.io/hotelDemo",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -11,7 +12,10 @@
     "test": "vitest",
     "test:ui": "vitest --ui",
     "lint": "prettier --plugin-search-dir . --check . && eslint .",
-    "format": "prettier --plugin-search-dir . --write ."
+    "format": "prettier --plugin-search-dir . --write .",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
+    "start": "npm run dev"
   },
   "dependencies": {
     "bootstrap": "^5.3.3",
@@ -43,6 +47,7 @@
     "eslint-plugin-react-hooks": "^4.6.2",
     "eslint-plugin-testing-library": "^6.2.2",
     "eslint-plugin-unicorn": "^52.0.0",
+    "gh-pages": "^6.1.1",
     "jsdom": "^24.0.0",
     "prettier": "^3.2.5",
     "sass": "^1.76.0",
