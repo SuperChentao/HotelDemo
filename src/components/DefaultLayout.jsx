@@ -1,9 +1,30 @@
-import React from "react";
+import React, { useState } from "react";
 import { useLocation } from "react-router-dom";
+import { DropdownButton, Dropdown } from 'react-bootstrap'
+import { useTranslation } from 'react-i18next';
+import i18n from '../i18n'; // 导入i18n配置
 // 公用头部组件
 const HeaderComponent = () => {
   const location = useLocation();
-
+  const [lang, setLang] = useState({
+    lang: 'zh',
+    label: '中文'
+  });
+  const [langList] = useState([
+    {
+      lang: 'zh',
+      label: '中文'
+    },
+    {
+      lang: 'en',
+      label: 'English'
+    }
+  ])
+  const toggleLang = (lang) => {
+    setLang(lang)
+    i18n.changeLanguage(lang.lang)
+  }
+  const { t } = useTranslation();
   // debugger
   return (
     <div className="container">
@@ -15,7 +36,7 @@ const HeaderComponent = () => {
         <ul className="nav nav-pills">
           <li className="nav-item">
             <a href="/#" className={location.pathname === "/" ? "nav-link active" : "nav-link"}>
-              Home
+              {t('首页')}
             </a>
           </li>
           <li className="nav-item">
@@ -23,7 +44,7 @@ const HeaderComponent = () => {
               href="/#roomsFeatures"
               className={location.pathname === "/roomsFeatures" ? "nav-link active" : "nav-link"}
             >
-              Rooms Features
+              {t('房间特征')}
             </a>
           </li>
           <li className="nav-item">
@@ -40,6 +61,13 @@ const HeaderComponent = () => {
             </a>
           </li>
         </ul>
+        <DropdownButton style={{marginLeft: '16px'}} title={lang.label}>
+          {
+            langList.map((item, index) => {
+              return <Dropdown.Item key={index} onClick={ ()=>{toggleLang(item)} }>{item.label}</Dropdown.Item>
+            })
+          }
+        </DropdownButton>
       </header>
     </div>
   );

@@ -3,21 +3,48 @@ import withLayout from "../components/DefaultLayout";
 import { useState, useRef } from 'react';
 import { Toast, ToastContainer, Form } from 'react-bootstrap';
 
-const StepFirst = ({step, toggleStep}) => {
+const StepFirst = ({step, toggleStep, getFormData}) => {
   const formRef = useRef(null)
   const next = (event) => {
-
     event.preventDefault()
     event.stopPropagation()
     if (formRef.current) {
       const formIsValid = formRef.current.checkValidity()
       if (formIsValid) {
+        getFormData({
+          roomType,
+          stayPeople,
+          name,
+          checkIndate,
+          checkOutdate
+        })
         toggleStep(2)
       } else {
         console.log('表单验证失败')
         formRef.current.classList.add('was-validated')
       }
     }
+  }
+  const [checkIndate, setCheckIndate] = useState('')
+  const [checkOutdate, setCheckOutdate] = useState('')
+  const checkOutdateOnChange = (event) => {
+    setCheckOutdate(event.target.value)
+  }
+  const checkIndateOnChange = (event) => {
+    setCheckIndate(event.target.value)
+  }
+  
+  const [name, setName] = useState('')
+  const nameOnChange = (event) => {
+    setName(event.target.value)
+  }
+  const [stayPeople, setStayPeople] = useState(1)
+  const stayPeopleOnChange = (event) => {
+    setStayPeople(event.target.value)
+  }
+  const [roomType, setRoomType] = useState(1)
+  const roomTypeOnChange = (event) => {
+    setRoomType(event.target.value)
   }
   return step===1?(
     <div className="container text-left px-2">
@@ -34,7 +61,7 @@ const StepFirst = ({step, toggleStep}) => {
                     <label htmlFor="exampleInputEmail1" className="form-label">
                       Choose room type
                     </label>
-                    <select className="form-select" id="validationCustom04" required>
+                    <select className="form-select" value={ roomType } onChange={ roomTypeOnChange } required>
                       <option value="1">Room type 1</option>
                       <option value="2">Room type 2</option>
                       <option value="3">Room type 3</option>
@@ -47,7 +74,7 @@ const StepFirst = ({step, toggleStep}) => {
                     <label htmlFor="exampleInputEmail1" className="form-label">
                       How many people to stay
                     </label>
-                    <select className="form-select" id="validationCustom04" required>
+                    <select className="form-select" value={stayPeople} onChange={stayPeopleOnChange} required>
                       <option value="1">1</option>
                       <option value="2">2</option>
                       <option value="3">3</option>
@@ -63,8 +90,7 @@ const StepFirst = ({step, toggleStep}) => {
                     <input
                       type="text"
                       className="form-control"
-                      id="exampleInputEmail1"
-                      aria-describedby="emailHelp"
+                      value={name} onChange={nameOnChange}
                       placeholder="Text"
                       required
                     />
@@ -106,14 +132,21 @@ const StepFirst = ({step, toggleStep}) => {
                   </div>
                   <div className="mb-3">
                     <label htmlFor="datePicker" className="form-label">Check in date</label>
-                    <input type="date" id="datePicker" className="form-control" required/>
+                    <input type="date" 
+                      value={checkIndate}
+                      onChange={checkIndateOnChange}
+                      className="form-control" required/>
                     <div className="invalid-feedback">
                       Please select
                     </div>
                   </div>
                   <div className="mb-3">
                     <label htmlFor="datePicker" className="form-label">Check out date</label>
-                    <input type="date" id="datePicker" className="form-control" required/>
+                    <input type="date" 
+                      value={checkOutdate}
+                      onChange={checkOutdateOnChange}
+                      className="form-control"
+                      required/>
                     <div className="invalid-feedback">
                       Please select
                     </div>
@@ -241,7 +274,7 @@ const StepSecond = ({step, toggleStep}) => {
   ) : null
 }
 
-const StepThree = ({step}) => {
+const StepThree = ({step ,order}) => {
   const navigate = useNavigate();
   const goHome = () => {
     navigate('/#');
@@ -253,15 +286,15 @@ const StepThree = ({step}) => {
             <div className="mx-0">
               <div className="py-5">
                 <h5 className="text-center py-5 ">
-                  Great! You have successfully book room type 3.<br/>
-                  Check in date: xxx<br/>
-                  Check out date: xxx<br/>
-                  Name: xxx<br/>
-                  Number of people staying: xxx<br/>
+                  Great! You have successfully book room type {order.roomType}.<br/>
+                  Check in date: {order.checkIndate}<br/>
+                  Check out date: {order.checkOutdate}<br/>
+                  Name: {order.name}<br/>
+                  Number of people staying: {order.stayPeople}<br/>
                   we are looking forward to seeing you.
                 </h5>
               </div>
-              <form className="d-flex justify-content-center" onsubmit="return false">
+              <form className="d-flex justify-content-center" onSubmit="return false">
                 <div className="mx-3">
                   <div className="pt-2 pb-4">
                     <div className="text-center">
@@ -285,11 +318,34 @@ const BookNowPage = () => {
   const toggleStep = (step) => {
     return setStep(step)
   }
+  const [order, setOrder] = useState({
+    roomType: 1,
+    stayPeople: 1,
+    name: '',
+    checkIndate: '',
+    checkOutdate: ''
+  });
+  const getFormData = (data) => {
+    const {
+      roomType,
+      stayPeople,
+      name,
+      checkIndate,
+      checkOutdate
+    } = data
+    setOrder({
+      roomType,
+      stayPeople,
+      name,
+      checkIndate,
+      checkOutdate
+    })
+  }
   return (
     <>
-      <StepFirst step={step} toggleStep={toggleStep}></StepFirst>
+      <StepFirst step={step} toggleStep={toggleStep} getFormData={getFormData}></StepFirst>
       <StepSecond step={step} toggleStep={toggleStep}></StepSecond>
-      <StepThree step={step}></StepThree>
+      <StepThree step={step} order={order}></StepThree>
     </>
   );
 }
